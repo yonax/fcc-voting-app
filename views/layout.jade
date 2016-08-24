@@ -6,6 +6,35 @@ html
     link(href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', rel='stylesheet', media='screen')
     link(rel='stylesheet', href='/static/style.css')
   body
+    nav.navbar.navbar-default.navbar-fixed-top
+      block navbar-select
+        -var selected = 'All polls'
+      
+      mixin navbar-item(url, label, selected)
+        if selected === label
+          li.active
+            a(href=url)= label
+        else
+          li
+            a(href=url)= label
+      
+      .container
+        .navbar-header
+          a.navbar-brand(href="/") FCC Voting App
+        div#navbar
+          ul.nav.navbar-nav
+            +navbar-item("/", "All polls", selected)
+            +navbar-item("/create", "Create poll", selected)
+            if user
+              +navbar-item("/my", "My polls", selected)
+
+          ul.nav.navbar-nav.navbar-right
+            if user
+              +navbar-item("/logout", `Logout ${user.username}`)
+            else
+              +navbar-item("/login", "Login", selected)
+              +navbar-item("/register", "Register", selected)
+    
     .container
       block content
 
