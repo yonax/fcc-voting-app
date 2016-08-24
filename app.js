@@ -32,9 +32,17 @@ app.use(require('express-session')({
 }));
 app.use(passport.initialize())
 app.use(passport.session());
+app.use(require('flash')());
 app.use('/static', express.static(path.resolve(__dirname, 'static')));
 
-app.get('/', (req, res) => res.render('index'));
+const User = require('./User');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+mongoose.Promise = global.Promise;
+mongoose.connect(DATABASE_URL);
+app.use('/', require('./routes'));
 
 if (NODE_ENV === 'development') {
   // only use in development
