@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const errorhandler = require('errorhandler')
+const expressValidator = require('express-validator');
 
 const path = require('path');
 
@@ -24,6 +25,13 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(expressValidator({
+ customValidators: {
+    isArray: function(value) {
+        return Array.isArray(value);
+    }
+ }
+})); 
 app.use(cookieParser());
 app.use(require('express-session')({
     secret: SESSION_SECRET,

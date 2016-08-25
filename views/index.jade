@@ -6,3 +6,10 @@ block content
       h1 Hello #{user.username}
     else
       h1 Hello unknown
+  
+  ul
+    for poll in polls
+      li= poll.topic 
+        ol
+          for choice in poll.choices
+            li= choice.text
