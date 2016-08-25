@@ -24,17 +24,28 @@ router.post('/register', (req, res) => {
 
 router.get('/login', (req, res) => res.render('login', { user: req.user }));
 router.post('/login', passport.authenticate('local', {
-    successRedirect: '/', failureRedirect: '/login', failureFlash: true
-}));
+    failureRedirect: '/login', failureFlash: true
+}), (req, res) => {
+  if (req.query.next) {
+    return res.redirect(req.query.next);
+  }
+  res.redirect('/')
+});
 
 router.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
 });
 
+const authenticated = nextUrl => (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect(`/login?next=${nextUrl}`);
+}
 
-router.get('/create', (req, res) => res.render('create'))
-router.post('/create', (req, res) => {
+router.get('/create', authenticated('create'), (req, res) => res.render('create', { user : req.user }))
+router.post('/create', authenticated('create'), (req, res) => {
   req.checkBody({
     'topic': {
       notEmpty: true,
