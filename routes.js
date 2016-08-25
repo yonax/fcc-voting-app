@@ -65,7 +65,8 @@ router.post('/create', authenticated('create'), (req, res) => {
   } else {
     Poll.create({
       topic: req.body.topic,
-      choices: req.body.choices.filter(c => c).map(text => ({ text }))
+      choices: req.body.choices.filter(c => c).map(text => ({ text })),
+      creator: req.user
     }, (err) => {
       if (err) {
         req.flash('error', err.message);
