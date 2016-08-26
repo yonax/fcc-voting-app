@@ -5,11 +5,16 @@ body {
 .poll-list {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .poll {
   cursor: pointer;
+  margin-right: 5px;
+}
+
+.poll:last-child {
+  margin-right: 0;
 }
 
 .poll:hover {
