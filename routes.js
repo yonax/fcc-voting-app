@@ -77,4 +77,10 @@ router.post('/create', authenticated('create'), (req, res) => {
   }
 });
 
+router.get('/my', authenticated('my'), (req, res) => {
+  Poll.find({ creator: req.user }).exec().then(userPolls => 
+    res.render('my', { polls : userPolls, user : req.user })
+  );
+});
+
 module.exports = router;
