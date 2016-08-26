@@ -97,6 +97,18 @@ router.get('/poll/:pollId', (req, res) => {
 router.post('/poll/:pollId', (req, res) => {
   const pollId = req.params.pollId;
 
+  if (req.body.customChoice && req.isAuthenticated()) {
+    Poll.findOneAndUpdate(
+      { _id: pollId },
+      { 
+        $push: { choices: {text: req.body.customChoice, votes: 1} },
+      }
+    )
+    .exec()
+    .then(() => res.redirect(`/poll/${pollId}/result`));
+    return;
+  }
+
   req.check({
     choice: {
       notEmpty: true,

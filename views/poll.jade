@@ -1,15 +1,22 @@
 extends layout
 
+mixin choice(text, id)
+  .radio
+    label
+      input(type="radio", name="choice", value=id)
+      span= text
+
 block content
   h3= poll.topic
   while message = flash.shift() 
     div.alert.alert-danger= message.message
   form(method="post")
     for choice in poll.choices
-      .radio
-        label
-          input(type="radio", name="choice", value=choice._id)
-          span= choice.text
+      +choice(choice.text, choice._id)
+      
+    if user
+      .form-group
+        input.form-control(type="text", name="customChoice" value="", placeholder="You option")
     
     .btn-group
       button.btn.btn-primary(type="submit") Vote
