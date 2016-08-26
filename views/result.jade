@@ -1,0 +1,13 @@
+extends layout
+
+append content
+  - var maxVotes = poll.choices.reduce((cmax, item) => Math.max(cmax, item.votes), 0);
+  for choice in poll.choices
+    .row(style="margin-top: 10px")
+      .col-xs-2(style="text-align: right")= choice.text
+      .col-xs-10
+        .progress
+          .progress-bar(style=`min-width: 2%; width: ${choice.votes * 100 / maxVotes}%`)
+            | #{choice.votes}
+
+

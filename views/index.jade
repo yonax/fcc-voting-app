@@ -7,9 +7,7 @@ block content
     else
       h1 Hello unknown
   
-  ul
+  .poll-list
     for poll in polls
-      li= poll.topic 
-        ol
-          for choice in poll.choices
-            li= choice.text
+      a.poll.well(href=`/poll/${poll.id}`)
+        h4= poll.topic

@@ -1,9 +1,18 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const Poll = new mongoose.Schema({
-  creator: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+const Choice = new Schema({
+  text: String,
+  votes: {
+    type: Number,
+    default: 0
+  }
+});
+
+const Poll = new Schema({
+  creator: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   topic: String,
-  choices: [{text: String, votes: Number}]
+  choices: [Choice]
 });
 
 module.exports = mongoose.model('Poll', Poll);

@@ -83,4 +83,53 @@ router.get('/my', authenticated('my'), (req, res) => {
   );
 });
 
+router.get('/poll/:pollId', (req, res) => {
+  Poll.findOne({ _id: req.params.pollId }).exec()
+  .then(poll =>
+    poll ? res.render('poll', { poll, user: req.user }) : res.status(404).render('404')
+  )
+  .catch(error =>
+    res.render('error', { error, user: req.user }) 
+  );
+});
+
+router.post('/poll/:pollId', (req, res) => {
+  const pollId = req.params.pollId;
+
+  req.check({
+    choice: {
+      notEmpty: true,
+      errorMessage: 'You should choose something to vote'
+    }
+  });
+
+  const errors = req.validationErrors();
+  if (errors) {
+    errors.forEach(error => req.flash('error', error.msg));
+    return res.redirect(`/poll/${pollId}`);
+  }
+
+  const choiceId = req.body.choice;
+
+  Poll.findOneAndUpdate(
+    { _id: req.params.pollId, 'choices._id': choiceId},
+    {$inc: {"choices.$.votes": 1}}
+  ).then(() =>
+    res.redirect(`/poll/${pollId}/result`) 
+  ).catch(error =>
+    res.render('error', { error, user: req.user }) 
+  );
+
+});
+
+router.get('/poll/:pollId/result', (req, res) => {
+  Poll.findOne({ _id: req.params.pollId }).exec()
+  .then(poll =>
+    poll ? res.render('result', { poll }) : res.status(404).render('404')
+  )
+  .catch(error =>
+    res.render('error', { error, user: req.user }) 
+  );
+});
+
 module.exports = router;
