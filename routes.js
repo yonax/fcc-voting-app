@@ -84,7 +84,8 @@ router.get('/my', authenticated('my'), (req, res) => {
 });
 
 router.get('/poll/:pollId', (req, res) => {
-  Poll.findOne({ _id: req.params.pollId }).exec()
+  Poll.findOne({ _id: req.params.pollId })
+  .exec()
   .then(poll =>
     poll ? res.render('poll', { poll, user: req.user }) : res.status(404).render('404')
   )
@@ -120,6 +121,13 @@ router.post('/poll/:pollId', (req, res) => {
     res.render('error', { error, user: req.user }) 
   );
 
+});
+
+router.post('/poll/:pollId/delete', authenticated('/'), (req, res) => {
+  const pollId = req.params.pollId;
+
+  Poll.findOneAndRemove({ _id: pollId, creator: req.user }).exec()
+  .then(poll => res.redirect('/my'));
 });
 
 router.get('/poll/:pollId/result', (req, res) => {

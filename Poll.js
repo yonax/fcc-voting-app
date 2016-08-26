@@ -15,4 +15,13 @@ const Poll = new Schema({
   choices: [Choice]
 });
 
+Poll.methods.getTwitterLink = function() {
+  const link = encodeURIComponent(process.env.BASE_URL + `poll/${this._id}`);
+  const text = encodeURIComponent(this.topic);
+
+  return ( 
+    `https://twitter.com/intent/tweet?url=${link}&text=${text}`
+  );
+}
+
 module.exports = mongoose.model('Poll', Poll);
