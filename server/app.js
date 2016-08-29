@@ -19,7 +19,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const SESSION_SECRET = process.env.SESSION_SECRET || die('SESSION_SECRET not specified');
 const DATABASE_URL =  process.env.DATABASE_URL || die('DATABASE_URL not specified');
 
-app.set('views', path.resolve(__dirname, 'views'));
+app.set('views', path.resolve(__dirname, '..', 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
@@ -41,7 +41,7 @@ app.use(require('express-session')({
 app.use(passport.initialize())
 app.use(passport.session());
 app.use(require('flash')());
-app.use('/static', express.static(path.resolve(__dirname, 'static')));
+app.use('/static', express.static(path.resolve(__dirname, '..', 'static')));
 
 const User = require('./User');
 passport.use(new LocalStrategy(User.authenticate()));
