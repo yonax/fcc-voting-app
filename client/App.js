@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PollsList from './PollsList'; 
+import { Navigation, PollsList, Errors, Loading } from './components'; 
 import { fetchPolls } from './api';
 
 export default class App extends Component {
@@ -10,19 +10,16 @@ export default class App extends Component {
   componentDidMount() {
     fetchPolls().then(
       polls => this.setState({ polls, isFetching: false }),
-      error => this.setState({ 
-        error: error && error.message || 'Something went wrong', 
-        isFetching: true 
-      }),
+      error => this.setState({ error, isFetching: false }),
     )
   }
   render() {
-    if (this.state.error) {
-      return <h2>Error: {this.state.error}</h2>
-    }
+    const { error, polls, isFetching } = this.state;
     return (
       <div>
-        <PollsList polls={this.state.polls} />
+        <Navigation />
+        <Errors error={error} />
+        { isFetching ? <Loading /> : <PollsList polls={polls} /> }
       </div>
     )
   }
