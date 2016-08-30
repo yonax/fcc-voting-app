@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { PollsList, Errors, Loading } from './components'; 
-import { fetchPolls } from './api';
+import { PollsList, Errors, Loading } from '.'; 
+import { fetchPolls } from '../api';
 
 export default class App extends Component {
   state = {

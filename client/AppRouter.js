@@ -1,8 +1,7 @@
 import React from 'react';
 import { Router, Route, IndexRoute, browserHistory} from 'react-router';
 import Layout from './Layout';
-import AllPolls from './AllPolls';
-import { Poll } from './components';
+import { AllPolls, Poll } from './components';
 
 export default function() {
   return (
