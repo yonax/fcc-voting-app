@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navigation, PollsList, Errors, Loading } from './components'; 
+import { PollsList, Errors, Loading } from './components'; 
 import { fetchPolls } from './api';
 
 export default class App extends Component {
@@ -17,7 +17,6 @@ export default class App extends Component {
     const { error, polls, isFetching } = this.state;
     return (
       <div>
-        <Navigation />
         <Errors error={error} />
         { isFetching ? <Loading /> : <PollsList polls={polls} /> }
       </div>

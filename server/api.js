@@ -13,4 +13,8 @@ router.get('/polls', (request, response) => {
   Poll.find().then(polls => response.json(polls));
 });
 
+router.get('/polls/:pollId', (request, response) => {
+  Poll.findOne({ _id: request.params.pollId }).then(poll => response.json(poll));
+});
+
 module.exports = router;
