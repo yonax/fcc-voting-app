@@ -9,3 +9,23 @@ export function fetchPoll(id) {
     response => response.json()
   )
 }
+
+export const voteFor = (pollId, choiceId) => 
+  fetch(`/api/polls/${pollId}/vote`, {
+    method: 'POST',
+    headers: new Headers({
+      'Content-type': 'application/json'
+    }),
+    body: JSON.stringify({
+      choiceId
+    })
+  }).then(
+    response => handleError(response)
+  )
+
+function handleError(response) {
+  if (response.ok) {
+    return response.json();
+  }
+  return response.json().then(({ error }) => Promise.reject({ message: error }));
+}
