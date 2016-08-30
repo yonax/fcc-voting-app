@@ -3,7 +3,8 @@ import { withRouter } from 'react-router';
 import { fetchPoll } from '../api';
 import { Loading, Errors } from '.';
 
-class Poll extends Component {
+@withRouter
+export default class Poll extends Component {
   state = {
     isFetching: true,
     poll: null
@@ -35,5 +36,3 @@ class Poll extends Component {
     )
   }
 }
-
-export default withRouter(Poll);
