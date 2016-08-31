@@ -23,6 +23,17 @@ export const voteFor = (pollId, choiceId) =>
     response => handleError(response)
   )
 
+export const createPoll = (poll) => 
+  fetch(`/api/polls/`, {
+    method: 'POST',
+    headers: new Headers({
+      'Content-type': 'application/json'
+    }),
+    body: JSON.stringify(poll)
+  }).then(
+    response => handleError(response)
+  )
+
 function handleError(response) {
   if (response.ok) {
     return response.json();

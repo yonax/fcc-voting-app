@@ -31,4 +31,16 @@ router.post('/polls/:pollId/vote', (request, response) => {
   );
 });
 
+router.post('/polls/', (request, response) => {
+  const poll = request.body;
+
+  Poll.create(poll).then(
+    createdPoll => poll ? response.json(createdPoll) : response.status(400).json({ error: "Something went wrong" }),
+    error       => {
+      console.log(error);
+      response.status(400).json({ error: error.message })
+    }
+  )
+});
+
 module.exports = router;

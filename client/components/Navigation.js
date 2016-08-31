@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { Link } from 'react-router';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const Navigation = (props) => (
   <Navbar>
@@ -10,7 +11,9 @@ const Navigation = (props) => (
       </Navbar.Brand>
     </Navbar.Header>
     <Nav>
-      <NavItem eventKey={1} href="#">Link</NavItem>
+      <LinkContainer to="/create-poll">
+        <NavItem>Create poll</NavItem>
+      </LinkContainer>
     </Nav>
   </Navbar>
 );

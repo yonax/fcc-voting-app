@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route, IndexRoute, browserHistory} from 'react-router';
 import Layout from './Layout';
-import { AllPolls, Poll, PollResult } from './components';
+import { AllPolls, Poll, PollResult, CreatePoll } from './components';
 
 export default function() {
   return (
@@ -10,6 +10,7 @@ export default function() {
         <IndexRoute component={AllPolls} />
         <Route path="polls/:pollId" component={Poll} />
         <Route path="polls/:pollId/result" component={PollResult} />
+        <Route path="create-poll" component={CreatePoll} />
       </Route>
     </Router>
   );
