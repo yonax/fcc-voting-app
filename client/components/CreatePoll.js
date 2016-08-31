@@ -68,8 +68,9 @@ export default class CreatePoll extends Component {
     } else {
       this.setState({ errors: null });
       const { topic, choices } = this.state;
+      const nonEmptyChoices = choices.filter(c => !!c.text);
 
-      createPoll({ topic, choices })
+      createPoll({ topic, choices: nonEmptyChoices })
       .then(
         poll  => browserHistory.push(`/polls/${poll._id}`),
         error => this.setState({ errors: [error]})
