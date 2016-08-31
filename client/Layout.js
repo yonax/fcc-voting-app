@@ -6,7 +6,7 @@ export default function Layout({ children }) {
   return (
     <div>
       <Navigation />
-      <Grid>
+      <Grid style={{minWidth: 500}}>
         { React.Children.only(children) }
       </Grid>
     </div>

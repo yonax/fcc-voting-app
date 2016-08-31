@@ -4,7 +4,7 @@ import { Alert } from 'react-bootstrap';
 const Errors = ({ error }) => (
   error 
    ? <Alert bsStyle="danger">
-      <h4>{ error.message || 'Something went wrong'}</h4>
+        { error.message || 'Something went wrong'}
      </Alert>
    : null
 );

@@ -32,7 +32,7 @@ export default class PollResult extends Component {
     return (
       <Grid>
       {poll.choices.map(choice => 
-        <Row>
+        <Row key={choice._id}>
           <Col xs={2}>{ choice.text}</Col>
           <Col xs={10}>
             <ProgressBar style={{minWidth: '2%'}} 
