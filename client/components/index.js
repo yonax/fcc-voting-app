@@ -6,3 +6,4 @@ export { default as Poll } from './Poll';
 export { default as AllPolls } from './AllPolls';
 export { default as PollResult } from './PollResult';
 export { default as CreatePoll } from './CreatePoll';
+export { default as Login } from './Login';

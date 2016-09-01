@@ -34,6 +34,19 @@ export const createPoll = (poll) =>
     response => handleError(response)
   )
 
+export const login = (username, password) => 
+  fetch(`/api/auth/login`, {
+    method: 'POST',
+    headers: new Headers({
+      'Content-type': 'application/json'
+    }),
+    body: JSON.stringify({
+      username, password
+    })
+  }).then(
+    response => handleError(response)
+  )
+
 function handleError(response) {
   if (response.ok) {
     return response.json();

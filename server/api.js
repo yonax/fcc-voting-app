@@ -43,4 +43,21 @@ router.post('/polls/', (request, response) => {
   )
 });
 
+router.post('/auth/login', (request, response) => {
+  const username = request.body.username;
+  const password = request.body.password;
+  
+  if (!username || !password) {
+    return response.status(400).json({ error: 'Missing password or username'});
+  }
+  if (username === 'user' && password === '123') {
+    response.json({ 
+      username,
+      token: require('crypto').randomBytes(8).toString('base64') 
+    });
+  } else {
+    return response.status(401).json({ error: 'Wrong password or username'});
+  }
+});
+
 module.exports = router;
