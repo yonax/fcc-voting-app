@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import { Form, Radio, ButtonToolbar, Button } from 'react-bootstrap';
+import update from 'react-addons-update';
+import { 
+  Form, Radio, ButtonToolbar, Button,
+  FormGroup, InputGroup, FormControl
+} from 'react-bootstrap';
 import { browserHistory } from 'react-router'
 import { fetchPoll, voteFor } from '../api';
 import { Loading, Errors } from '.';
+import auth from '../auth';
 
 @withRouter
 export default class Poll extends Component {
   state = {
     isFetching: true,
-    poll: null
+    poll: null,
+    selectedChoice: null,
   }
+
   componentDidMount() {
     const { params: { pollId } } = this.props; 
     fetchPoll(pollId).then(
@@ -18,19 +25,37 @@ export default class Poll extends Component {
       error => this.setState({ error, isFetching: false })
     )
   }
+
   vote = () => {
-    const { checked } = this.state;
+    const { selectedChoice } = this.state;
     const { pollId } = this.props.params;
-    voteFor(pollId, checked).then(
+
+    voteFor(pollId, selectedChoice).then(
       response => browserHistory.push(`/polls/${pollId}/result`),
       error => this.setState({ error })  
     );
   }
-  handleChangeChoice = (id) => {
-    this.setState({ checked: id, error: null });
-  } 
+
+  selectChoice = (choice) => {
+    this.setState({ selectedChoice: choice  });
+  }
+
+  handleChangeCustom(text) {
+    this.setState(update(this.state, { 
+      selectedChoice: {
+        text: {
+          $set: text
+        }
+      }
+    }));
+  }
+  isValid() {
+    const { selectedChoice } = this.state;
+    
+    return selectedChoice && selectedChoice.text; 
+  }
   render() {
-    const { isFetching, poll, error, checked } = this.state;
+    const { isFetching, poll, error, selectedChoice } = this.state;
     if (error) {
       return <Errors error={error} />
     }
@@ -44,11 +69,18 @@ export default class Poll extends Component {
           {poll.choices.map(choice =>
             <Choice 
               key={choice._id} 
-              id={choice._id} 
-              label={choice.text} 
-              onChange={this.handleChangeChoice} />
+              choice={choice}
+              selected={selectedChoice === choice}
+              select={this.selectChoice} />
           )}
-          <Controls vote={this.vote} voteDisabled={!checked}
+          { auth.isAuthenticated() && 
+            <CustomChoice selected={selectedChoice && selectedChoice.custom}
+                          value={selectedChoice && selectedChoice.custom && selectedChoice.text} 
+                          change={::this.handleChangeCustom}
+                          select={this.selectChoice} /> 
+          } 
+
+          <Controls vote={this.vote} voteDisabled={!this.isValid()}
                     goBack={browserHistory.goBack}
                     goResult={() => browserHistory.push(`/polls/${poll._id}/result`)} />
         </Form>
@@ -57,10 +89,32 @@ export default class Poll extends Component {
   }
 }
 
-function Choice({ id, label, onChange }) {
+function CustomChoice({ selected, value, change, select }) {
   return (
-    <Radio name="choice" value={id} onClick={() => onChange(id)}>
-      { label }
+    <FormGroup>
+      <InputGroup>
+        <InputGroup.Addon>
+          <input type="radio" name="choice" onClick={() => select({ text: '', custom: true})}/>
+        </InputGroup.Addon>
+        <FormControl 
+          type="text" 
+          placeholder="custom choice"
+          disabled={!selected}
+          value={value}
+          onChange={(e) => change(e.target.value)}
+        />
+      </InputGroup>
+    </FormGroup>
+  );
+}
+
+function Choice({ choice, selected, select }) {
+  return (
+    <Radio name="choice" value={choice._id} 
+           onClick={() => select(choice)}
+           checked={selected}
+           style={{ padding: "6px 12px "}}>
+      { choice.text }
     </Radio>
   );
 }

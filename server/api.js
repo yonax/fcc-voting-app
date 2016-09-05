@@ -13,22 +13,39 @@ router.get('/polls/:pollId', (request, response) => {
 
 router.post('/polls/:pollId/vote', (request, response) => {
   const pollId = request.params.pollId;
-  const choiceId  = request.body.choiceId;
-  console.log(request.params, request.body);
+  const custom = request.body.custom;
 
-  if (!choiceId) {
-    return response.status(400).json({
-      error: 'choiceId must be present'
-    });
+  if (custom) {
+    const text = request.body.text;
+    if (!text) {
+      return response.status(400).json({
+        error: 'text must be present'
+      });
+    }
+    Poll.findOneAndUpdate(
+      { _id: pollId },
+      { $push: {'choices' : {text, votes: 1}}},
+      { new: true }
+    ).then(
+      poll => poll ? response.json(poll) : response.status(400).json({ error: "Poll not found" }),
+      error => response.status(400).json({ error: error.message })  
+    )
+  } else {
+    const choiceId  = request.body._id;
+    if (!choiceId) {
+      return response.status(400).json({
+        error: 'choiceId must be present'
+      });
+    }
+    Poll.findOneAndUpdate(
+      { _id: pollId, 'choices._id': choiceId },
+      { $inc: {"choices.$.votes": 1} },
+      { new: true }
+    ).then(
+      poll => poll ? response.json(poll) : response.status(400).json({ error: "Poll or choice not found" }),
+      error => response.status(400).json({ error: error.message })
+    );
   }
-  Poll.findOneAndUpdate(
-    { _id: pollId, 'choices._id': choiceId },
-    { $inc: {"choices.$.votes": 1} },
-    { new: true }
-  ).then(
-    poll => poll ? response.json(poll) : response.status(400).json({ error: "Poll or choice not found" }),
-    error => response.status(400).json({ error: error.message })
-  );
 });
 
 router.post('/polls/', (request, response) => {

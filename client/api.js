@@ -10,15 +10,13 @@ export function fetchPoll(id) {
   )
 }
 
-export const voteFor = (pollId, choiceId) => 
+export const voteFor = (pollId, payload) => 
   fetch(`/api/polls/${pollId}/vote`, {
     method: 'POST',
     headers: new Headers({
       'Content-type': 'application/json'
     }),
-    body: JSON.stringify({
-      choiceId
-    })
+    body: JSON.stringify(payload)
   }).then(
     response => handleError(response)
   )
