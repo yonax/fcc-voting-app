@@ -2,20 +2,57 @@ const mongoose = require('mongoose');
 const User = require('./User');
 const Poll = require('./Poll');
 const router = require('express').Router();
+const passport = require('passport');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwt = require('jsonwebtoken');
+
+const SECRET_KEY = process.env.SECRET_KEY || "bla-bla"; 
+
+passport.use(new JwtStrategy({
+  jwtFromRequest: ExtractJwt.fromAuthHeader(),
+  secretOrKey: SECRET_KEY
+}, (jwt_payload, done) => {
+  User.findByUsername(jwt_payload.username, (error, user) => {
+    if (error) {
+      return done(error, false);
+    }
+    if (user) {
+      done(null, user);
+    } else {
+      done(null, false);
+    }
+  });
+}));
+
+const optionalAuth = (request, response, next) => {
+  passport.authenticate('jwt', (err, user, info) => {
+    if (user)  {
+      request.user = user;
+    }
+    next();
+  })(request, response);
+}
+const requireAuth  = passport.authenticate('jwt', { session: false });
 
 router.get('/polls', (request, response) => {
   Poll.find().then(polls => response.json(polls));
 });
 
-router.get('/polls/:pollId', (request, response) => {
+router.get('/polls/:pollId',  (request, response) => {
   Poll.findOne({ _id: request.params.pollId }).then(poll => response.json(poll));
 });
 
-router.post('/polls/:pollId/vote', (request, response) => {
+router.post('/polls/:pollId/vote', optionalAuth, (request, response) => {
   const pollId = request.params.pollId;
   const custom = request.body.custom;
+  console.log(request.isAuthenticated(), request.user);
 
   if (custom) {
+    if (!request.isAuthenticated()) {
+      return response.status(401).json({ error: 'Unauthorized' });
+    }
+
     const text = request.body.text;
     if (!text) {
       return response.status(400).json({
@@ -48,7 +85,7 @@ router.post('/polls/:pollId/vote', (request, response) => {
   }
 });
 
-router.post('/polls/', (request, response) => {
+router.post('/polls/', requireAuth, (request, response) => {
   const poll = request.body;
 
   Poll.create(poll).then(
@@ -67,14 +104,29 @@ router.post('/auth/login', (request, response) => {
   if (!username || !password) {
     return response.status(400).json({ error: 'Missing password or username'});
   }
-  if (username === 'user' && password === '123') {
-    response.json({ 
-      username,
-      token: require('crypto').randomBytes(8).toString('base64') 
-    });
-  } else {
-    return response.status(401).json({ error: 'Wrong password or username'});
-  }
+  User.findByUsername(username).then(
+    user => {
+      if (!user) {
+        return response.status(401).json({ error: 'Invalid username or password'});
+      }
+
+      user.authenticate(password, (err, _, passwordError) => {
+        if (err || passwordError) {
+          response.status(401).json({ erorr: 'Unauthorized', info: passwordError });
+        } else {
+          response.json({
+            username, 
+            token: jwt.sign({ username }, SECRET_KEY, {
+              expiresIn: 3600
+            })
+          })
+        }
+      })
+    }, 
+    error => {
+      response.status(401).json({ error });
+    }
+  )
 });
 
 module.exports = router;

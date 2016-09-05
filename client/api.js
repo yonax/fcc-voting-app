@@ -1,3 +1,5 @@
+import auth from './auth';
+
 export function fetchPolls() {
   return fetch('/api/polls').then(
     response => response.json()
@@ -14,7 +16,8 @@ export const voteFor = (pollId, payload) =>
   fetch(`/api/polls/${pollId}/vote`, {
     method: 'POST',
     headers: new Headers({
-      'Content-type': 'application/json'
+      'Content-type': 'application/json',
+      'Authorization': `JWT ${auth.getToken()}`
     }),
     body: JSON.stringify(payload)
   }).then(
@@ -25,7 +28,8 @@ export const createPoll = (poll) =>
   fetch(`/api/polls/`, {
     method: 'POST',
     headers: new Headers({
-      'Content-type': 'application/json'
+      'Content-type': 'application/json',
+      'Authorization': `JWT ${auth.getToken()}`
     }),
     body: JSON.stringify(poll)
   }).then(
