@@ -7,23 +7,14 @@ import {
 } from 'react-bootstrap';
 import { browserHistory } from 'react-router'
 import { fetchPoll, voteFor } from '../api';
-import { Loading, Errors } from '.';
+import { Errors } from '.';
+import fetcher from '../fetcher';
 import auth from '../auth';
 
-@withRouter
-export default class Poll extends Component {
+class Poll extends Component {
   state = {
-    isFetching: true,
     poll: null,
     selectedChoice: null,
-  }
-
-  componentDidMount() {
-    const { params: { pollId } } = this.props; 
-    fetchPoll(pollId).then(
-      poll  => this.setState({ poll, isFetching: false }),
-      error => this.setState({ error, isFetching: false })
-    )
   }
 
   vote = () => {
@@ -49,19 +40,20 @@ export default class Poll extends Component {
       }
     }));
   }
+
   isValid() {
     const { selectedChoice } = this.state;
     
     return selectedChoice && selectedChoice.text; 
   }
+  
   render() {
-    const { isFetching, poll, error, selectedChoice } = this.state;
+    const { poll } = this.props;
+    const { error, selectedChoice } = this.state;
     if (error) {
       return <Errors error={error} />
     }
-    if (isFetching) {
-      return <Loading />
-    }
+
     return (
       <div>
         <h4>{ poll.topic }</h4>
@@ -128,3 +120,7 @@ function Controls({ vote, voteDisabled, goBack, goResult }) {
     </ButtonToolbar>
   );
 }
+
+const withPoll = fetcher(({ params: { pollId } }) => fetchPoll(pollId), 'poll');
+
+export default withPoll(withRouter(Poll));

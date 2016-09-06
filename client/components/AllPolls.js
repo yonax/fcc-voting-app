@@ -1,25 +1,9 @@
 import React, { Component } from 'react';
-import { PollsList, Errors, Loading } from '.'; 
+import PollsList from './PollsList'; 
 import { fetchPolls } from '../api';
+import fetcher from '../fetcher';
 
-export default class App extends Component {
-  state = {
-    isFetching: true,
-    polls: []
-  }
-  componentDidMount() {
-    fetchPolls().then(
-      polls => this.setState({ polls, isFetching: false }),
-      error => this.setState({ error, isFetching: false }),
-    )
-  }
-  render() {
-    const { error, polls, isFetching } = this.state;
-    return (
-      <div>
-        <Errors error={error} />
-        { isFetching ? <Loading /> : <PollsList polls={polls} /> }
-      </div>
-    )
-  }
-}
+const withPolls = fetcher(_ => fetchPolls(), 'polls');
+
+export default withPolls(PollsList);
+
