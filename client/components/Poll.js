@@ -72,7 +72,7 @@ class Poll extends Component {
                           select={this.selectChoice} /> 
           } 
 
-          <Controls vote={this.vote} voteDisabled={!this.isValid()}
+          <Controls poll={poll} vote={this.vote} voteDisabled={!this.isValid()}
                     goBack={browserHistory.goBack}
                     goResult={() => browserHistory.push(`/polls/${poll._id}/result`)} />
         </Form>
@@ -111,12 +111,19 @@ function Choice({ choice, selected, select }) {
   );
 }
 
-function Controls({ vote, voteDisabled, goBack, goResult }) {
+function Controls({ poll, vote, voteDisabled, goBack, goResult }) {
+  const link = encodeURIComponent(window.location);
+  const text = encodeURIComponent(poll.topic);
+  const href = `https://twitter.com/intent/tweet?url=${link}&text=${text}`;
+
   return (
     <ButtonToolbar>
       <Button bsStyle="success" disabled={voteDisabled} onClick={vote}>Vote</Button>
       <Button onClick={goBack}>Back</Button>
       <Button onClick={goResult}>See result</Button>
+      <Button href={href}>
+        <span className="fa fa-twitter" />&nbsp;Share on Twitter
+      </Button>
     </ButtonToolbar>
   );
 }
