@@ -49,6 +49,19 @@ export const login = (username, password) =>
     response => handleError(response)
   )
 
+export const signup = (username, password) => 
+  fetch(`/api/auth/signup`, {
+    method: 'POST',
+    headers: new Headers({
+      'Content-type': 'application/json'
+    }),
+    body: JSON.stringify({
+      username, password
+    })
+  }).then(
+    response => handleError(response)
+  )
+
 function handleError(response) {
   if (response.ok) {
     return response.json();

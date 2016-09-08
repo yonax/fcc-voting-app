@@ -16,18 +16,30 @@ const Navigation = (props) => (
         <NavItem>Create poll</NavItem>
       </LinkContainer>
     </Nav>
-    <Nav pullRight>
-        { auth.isAuthenticated() ?
-          <LinkContainer to="/logout">
-            <NavItem>Logout</NavItem>
-          </LinkContainer>
-          :
-          <LinkContainer to="/login">
-            <NavItem>Login</NavItem>
-          </LinkContainer>
-        }
-    </Nav>
+    { auth.isAuthenticated() ?
+      <AuthenticatedUserMenu />:
+      <UnauthenticatedUserMenu />
+    }
   </Navbar>
+);
+
+const AuthenticatedUserMenu = (props) => (
+  <Nav pullRight>
+    <LinkContainer to="/logout">
+      <NavItem>Logout</NavItem>
+    </LinkContainer>
+  </Nav>
+);
+
+const UnauthenticatedUserMenu = (props) => (
+  <Nav pullRight>
+    <LinkContainer to="/login">
+      <NavItem>Log in</NavItem>
+    </LinkContainer>
+    <LinkContainer to="/signup">
+      <NavItem>Sign up</NavItem>
+    </LinkContainer>
+  </Nav>
 );
 
 export default Navigation;

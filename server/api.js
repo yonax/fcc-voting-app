@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const User = require('./User');
 const Poll = require('./Poll');
@@ -8,6 +10,12 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 
 const SECRET_KEY = process.env.SECRET_KEY || "bla-bla"; 
+
+function createToken(username) {
+  return jwt.sign({ username }, SECRET_KEY, {
+    expiresIn: 3600
+  });
+}
 
 passport.use(new JwtStrategy({
   jwtFromRequest: ExtractJwt.fromAuthHeader(),
@@ -116,9 +124,7 @@ router.post('/auth/login', (request, response) => {
         } else {
           response.json({
             username, 
-            token: jwt.sign({ username }, SECRET_KEY, {
-              expiresIn: 3600
-            })
+            token: createToken(username)
           })
         }
       })
@@ -127,6 +133,22 @@ router.post('/auth/login', (request, response) => {
       response.status(401).json({ error });
     }
   )
+});
+
+router.post('/auth/signup', (request, response) => {
+  const username = request.body.username;
+  const password = request.body.password;
+
+  if (!username || !password) {
+    return response.status(400).json({ error: 'Missing password or username'});
+  }
+
+  User.register(new User({ username }), password, (error, user) => {
+    if (error) {
+      return response.status(400).json({ error: error.message });
+    }
+    response.json({ username, token: createToken(username) });
+  });
 });
 
 module.exports = router;
