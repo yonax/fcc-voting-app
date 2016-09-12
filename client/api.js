@@ -1,7 +1,12 @@
 import auth from './auth';
 
-export function fetchPolls() {
-  return fetch('/api/polls').then(
+export function fetchPolls(filter='all') {
+  return fetch(`/api/polls?filter=${filter}`, {
+    headers: new Headers({
+      'Content-type': 'application/json',
+      'Authorization': `JWT ${auth.getToken()}`
+    })
+  }).then(
     response => response.json()
   ); 
 }

@@ -7,6 +7,10 @@ export default {
     return localStorage.token;
   },
 
+  getUsername() {
+    return localStorage.username;
+  },
+
   login(username, token) {
     localStorage.username = username;
     localStorage.token  = token;

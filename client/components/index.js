@@ -8,3 +8,4 @@ export { default as PollResult } from './PollResult';
 export { default as CreatePoll } from './CreatePoll';
 export { default as Login } from './Login';
 export { default as Signup } from './Signup';
+export { default as MyPolls } from './MyPolls';

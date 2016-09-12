@@ -25,8 +25,11 @@ const Navigation = (props) => (
 
 const AuthenticatedUserMenu = (props) => (
   <Nav pullRight>
+    <LinkContainer to="/my-polls">
+      <NavItem>My polls</NavItem>
+    </LinkContainer>
     <LinkContainer to="/logout">
-      <NavItem>Logout</NavItem>
+      <NavItem>{ `Logout ${auth.getUsername()}` }</NavItem>
     </LinkContainer>
   </Nav>
 );

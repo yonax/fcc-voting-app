@@ -43,8 +43,16 @@ const optionalAuth = (request, response, next) => {
 }
 const requireAuth  = passport.authenticate('jwt', { session: false });
 
-router.get('/polls', (request, response) => {
-  Poll.find().then(polls => response.json(polls));
+router.get('/polls', optionalAuth, (request, response) => {
+  const my = request.query.filter === 'my';
+  let query = {};
+
+  if (request.isAuthenticated() && my) {
+    const userId = request.user._id;
+    query = Object.assign({}, query, { creator: userId });
+  }
+
+  Poll.find(query).then(polls => response.json(polls));
 });
 
 router.get('/polls/:pollId',  (request, response) => {
@@ -94,7 +102,7 @@ router.post('/polls/:pollId/vote', optionalAuth, (request, response) => {
 });
 
 router.post('/polls/', requireAuth, (request, response) => {
-  const poll = request.body;
+  const poll = Object.assign({}, request.body, { creator: request.user });
 
   Poll.create(poll).then(
     createdPoll => poll ? response.json(createdPoll) : response.status(400).json({ error: "Something went wrong" }),

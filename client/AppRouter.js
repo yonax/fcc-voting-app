@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, Route, IndexRoute, browserHistory} from 'react-router';
 import Layout from './Layout';
-import { AllPolls, Poll, PollResult, CreatePoll, Login, Signup } from './components';
+import { AllPolls, Poll, PollResult, CreatePoll, Login, Signup, MyPolls } from './components';
 import auth from './auth';
 
 function requireAuth(nextState, replace) {
@@ -31,6 +31,7 @@ export default function() {
         <Route path="login" component={Login} />
         <Route path="signup" component={Signup} />
         <Route path="logout" onEnter={logout} />
+        <Route path="my-polls" onEnter={requireAuth} component={MyPolls} />
       </Route>
     </Router>
   );

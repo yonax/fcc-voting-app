@@ -10,7 +10,7 @@ const Choice = new Schema({
 });
 
 const Poll = new Schema({
-  creator: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  creator: { type: Schema.Types.ObjectId, ref: 'User' },
   topic: String,
   choices: [Choice]
 });
