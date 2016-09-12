@@ -55,8 +55,17 @@ router.get('/polls', optionalAuth, (request, response) => {
   Poll.find(query).then(polls => response.json(polls));
 });
 
-router.get('/polls/:pollId',  (request, response) => {
-  Poll.findOne({ _id: request.params.pollId }).then(poll => response.json(poll));
+router.get('/polls/:pollId',  optionalAuth, (request, response) => {
+  Poll.findOne({ _id: request.params.pollId }).then(
+    poll => {
+      const res = Object.assign(
+        {},
+        poll.toObject(),
+        { canDelete: request.isAuthenticated() && request.user.equals(poll.creator) }
+      );
+      response.json(res);
+    }
+  );
 });
 
 router.post('/polls/:pollId/vote', optionalAuth, (request, response) => {
@@ -105,7 +114,19 @@ router.post('/polls/', requireAuth, (request, response) => {
   const poll = Object.assign({}, request.body, { creator: request.user });
 
   Poll.create(poll).then(
-    createdPoll => poll ? response.json(createdPoll) : response.status(400).json({ error: "Something went wrong" }),
+    createdPoll => createdPoll ? response.json(createdPoll) : response.status(400).json({ error: "Something went wrong" }),
+    error       => {
+      console.log(error);
+      response.status(400).json({ error: error.message })
+    }
+  )
+});
+
+router.delete('/polls/:pollId', requireAuth, (request, response) => {
+  const pollId = request.params.pollId;
+
+  Poll.findOneAndRemove({ _id: pollId }).then(
+    removedPoll => removedPoll ? response.json(removedPoll) : response.status(400).json({ error: "Something went wrong" }),
     error       => {
       console.log(error);
       response.status(400).json({ error: error.message })

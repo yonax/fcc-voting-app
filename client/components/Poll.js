@@ -6,7 +6,7 @@ import {
   FormGroup, InputGroup, FormControl
 } from 'react-bootstrap';
 import { browserHistory } from 'react-router'
-import { fetchPoll, voteFor } from '../api';
+import { fetchPoll, voteFor, remove } from '../api';
 import { Errors } from '.';
 import fetcher from '../fetcher';
 import auth from '../auth';
@@ -39,6 +39,14 @@ class Poll extends Component {
         }
       }
     }));
+  }
+
+  remove() {
+    if (confirm("Are you sure?")) {
+      remove(this.props.poll._id).then(
+        () => browserHistory.replace('/')
+      );
+    }
   }
 
   isValid() {
@@ -74,7 +82,8 @@ class Poll extends Component {
 
           <Controls poll={poll} vote={this.vote} voteDisabled={!this.isValid()}
                     goBack={browserHistory.goBack}
-                    goResult={() => browserHistory.push(`/polls/${poll._id}/result`)} />
+                    goResult={() => browserHistory.push(`/polls/${poll._id}/result`)}
+                    remove={::this.remove} />
         </Form>
       </div>
     )
@@ -111,7 +120,7 @@ function Choice({ choice, selected, select }) {
   );
 }
 
-function Controls({ poll, vote, voteDisabled, goBack, goResult }) {
+function Controls({ poll, vote, voteDisabled, goBack, goResult, remove }) {
   const link = encodeURIComponent(window.location);
   const text = encodeURIComponent(poll.topic);
   const href = `https://twitter.com/intent/tweet?url=${link}&text=${text}`;
@@ -124,6 +133,11 @@ function Controls({ poll, vote, voteDisabled, goBack, goResult }) {
       <Button href={href}>
         <span className="fa fa-twitter" />&nbsp;Share on Twitter
       </Button>
+      { poll.canDelete &&
+        <Button bsStyle="danger" onClick={remove}>
+          <span className="glyphicon glyphicon-trash" />&nbsp;Delete
+        </Button>
+      }
     </ButtonToolbar>
   );
 }

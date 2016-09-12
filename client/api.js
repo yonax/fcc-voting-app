@@ -12,7 +12,12 @@ export function fetchPolls(filter='all') {
 }
 
 export function fetchPoll(id) {
-  return fetch(`/api/polls/${id}`).then(
+  return fetch(`/api/polls/${id}`, {
+    headers: new Headers({
+      'Content-type': 'application/json',
+      'Authorization': `JWT ${auth.getToken()}`
+    })
+  }).then(
     response => response.json()
   )
 }
@@ -62,6 +67,17 @@ export const signup = (username, password) =>
     }),
     body: JSON.stringify({
       username, password
+    })
+  }).then(
+    response => handleError(response)
+  )
+
+export const remove = (pollId) => 
+  fetch(`/api/polls/${pollId}`, {
+    method: 'DELETE',
+    headers: new Headers({
+      'Content-type': 'application/json',
+      'Authorization': `JWT ${auth.getToken()}`
     })
   }).then(
     response => handleError(response)
