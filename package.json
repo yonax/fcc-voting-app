@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node devServer.js",
     "start": "node index.js"
   },
   "keywords": [],

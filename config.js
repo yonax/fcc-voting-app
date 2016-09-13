@@ -1,3 +1,5 @@
+'use strict';
+
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const errors = [];
 
@@ -23,6 +25,7 @@ function getEnv(name, defaultValue=undefined) {
 
 const config = {
   NODE_ENV,
+  isDevelopment: NODE_ENV === 'development',
   port: getEnvOrDefault('PORT', 5000),
   databaseUrl: getEnv('DATABASE_URL'),
   jwtSecret: getEnv('JWT_SECRET', 'bla-bla-bla'),
