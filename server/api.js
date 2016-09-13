@@ -1,24 +1,23 @@
 'use strict';
 
-const mongoose = require('mongoose');
 const { User, Poll } = require('./db');
 const router = require('express').Router();
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
+const config = require('../config');
 
-const SECRET_KEY = process.env.SECRET_KEY || "bla-bla"; 
 
 function createToken(username) {
-  return jwt.sign({ username }, SECRET_KEY, {
-    expiresIn: 3600
+  return jwt.sign({ username }, config.jwtSecret, {
+    expiresIn: config.jwtExpires
   });
 }
 
 passport.use(new JwtStrategy({
   jwtFromRequest: ExtractJwt.fromAuthHeader(),
-  secretOrKey: SECRET_KEY
+  secretOrKey: config.jwtSecret
 }, (jwt_payload, done) => {
   User.findByUsername(jwt_payload.username, (error, user) => {
     if (error) {

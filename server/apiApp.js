@@ -6,8 +6,6 @@ const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 const passport = require('passport');
 
-const die = require('./utils').die;
-
 const app = express();
 
 app.set('views', path.resolve(__dirname, '..', 'views'));

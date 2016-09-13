@@ -1,10 +1,10 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const DATABASE_URL = process.env.DATABASE_URL;
+const config = require('../../config');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(DATABASE_URL);
+mongoose.connect(config.databaseUrl);
 
 module.exports = {
   User: require('./User'),
