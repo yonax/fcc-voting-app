@@ -82,6 +82,7 @@ export default class CreatePoll extends Component {
   }
   render() {
     const { topic, choices, errors } = this.state;
+    const lastTabIndex = choices.length + 2;
 
     return (
       <Form>
@@ -92,6 +93,7 @@ export default class CreatePoll extends Component {
         </FormGroup>
         <FormGroup>
           <FormControl type="text" placeholder="Enter poll topic"
+                       tabIndex={1} autoFocus
                        value={topic} onChange={::this.handleTopicChange} />
         </FormGroup>
         <ChoicesList choices={choices} 
@@ -101,23 +103,24 @@ export default class CreatePoll extends Component {
         <Controls createPoll={::this.createPoll}
                   addEmpty={::this.addEmptyChoice}
                   goBack={::this.goBack}
+                  lastTabIndex={lastTabIndex}
         />
       </Form>
     )
   }
 }
 
-const Controls = ({ createPoll, goBack, addEmpty }) => (
+const Controls = ({ createPoll, goBack, addEmpty, lastTabIndex }) => (
   <ButtonToolbar>
-    <Button bsStyle="primary" onClick={createPoll}>
+    <Button bsStyle="primary" onClick={createPoll} tabIndex={lastTabIndex++}>
       <span className="glyphicon glyphicon-ok" />
       &nbsp;Create
     </Button>
-    <Button onClick={goBack}>
+    <Button onClick={goBack} tabIndex={lastTabIndex++}>
       <span className="glyphicon glyphicon-remove" />
       &nbsp;Cancel and go back
     </Button>
-    <Button onClick={addEmpty} className="pull-right">
+    <Button onClick={addEmpty} className="pull-right" tabIndex={lastTabIndex++}>
       <span className="glyphicon glyphicon-plus" />
       &nbsp;Add another choice
     </Button>
@@ -127,23 +130,25 @@ const Controls = ({ createPoll, goBack, addEmpty }) => (
 const ChoicesList = ({ choices, onChange, remove }) => (
   <div>
   {choices.map(({id, text}, index) =>
-    <Choice key={id} value={text} 
+    <Choice key={id} value={text}
+            tabIndex={index + 2} 
             onChange={onChange.bind(null, index)}
             remove={remove.bind(null, index)} /> 
   )}
   </div>
 ); 
 
-const Choice = ({ value, onChange, remove }) => (
+const Choice = ({ value, tabIndex, onChange, remove }) => (
   <FormGroup>
     <InputGroup>
       <InputGroup.Addon>
         <span className="glyphicon glyphicon-asterisk" />
       </InputGroup.Addon>
-      <FormControl type="text" placeholder="choice" 
+      <FormControl type="text" placeholder="choice"
+                   tabIndex={tabIndex} 
                    value={value} onChange={onChange} />
       <InputGroup.Button>
-        <Button bsStyle="danger" onClick={remove}>
+        <Button bsStyle="danger" onClick={remove} tabIndex={-1}>
           <span className="glyphicon glyphicon-trash" />
           &nbsp;Remove
         </Button>
