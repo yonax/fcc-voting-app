@@ -4,9 +4,13 @@
     ["react"]
   ],
   "plugins": [
-    "react-hot-loader/babel",
     "transform-decorators-legacy",
     "transform-class-properties",
     "transform-function-bind"
-  ]
+  ],
+  "env": {
+    "development": {
+      "plugins": ["react-hot-loader/babel"]
+    }
+  }
 }
