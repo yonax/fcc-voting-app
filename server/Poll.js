@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Choice = new Schema({
-  text: String,
+  text: {
+    type: String,
+    required: true
+  },
   votes: {
     type: Number,
     default: 0
@@ -10,18 +13,27 @@ const Choice = new Schema({
 });
 
 const Poll = new Schema({
-  creator: { type: Schema.Types.ObjectId, ref: 'User' },
-  topic: String,
-  choices: [Choice]
+  creator: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'User',
+    required: true 
+  },
+  topic: {
+    type: String,
+    required: true
+  },
+  choices: {
+    type: [Choice],
+    required: true,
+    validate: [arrayMinLength(2)]
+  }
 });
 
-Poll.methods.getTwitterLink = function() {
-  const link = encodeURIComponent(process.env.BASE_URL + `poll/${this._id}`);
-  const text = encodeURIComponent(this.topic);
-
-  return ( 
-    `https://twitter.com/intent/tweet?url=${link}&text=${text}`
-  );
+function arrayMinLength(n) {
+  return {
+   validator(v) { return v.length >= n },
+   message: `{PATH} must have minimum length of ${n}`
+  };
 }
 
 module.exports = mongoose.model('Poll', Poll);

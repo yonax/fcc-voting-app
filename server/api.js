@@ -1,8 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const User = require('./User');
-const Poll = require('./Poll');
+const { User, Poll } = require('./db');
 const router = require('express').Router();
 const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
