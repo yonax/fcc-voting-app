@@ -1,7 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
 import AppRouter from './AppRouter';
+
+if (module.hot) {
+  const AppContainer = require('react-hot-loader');
+}
 
 const root = document.getElementById('root');
 
